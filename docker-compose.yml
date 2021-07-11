@@ -1,0 +1,101 @@
+version: '3.2'
+services:
+
+  #torrent_deluge:
+    #image: ghcr.io/linuxserver/deluge
+    #container_name: torrent_deluge
+    #environment:
+      #- PUID=1000
+      #- PGID=1000
+      #- TZ=America/Sao_Paulo
+      #- DELUGE_LOGLEVEL=error #optional
+    #volumes:
+      #- ./deluge/config:/config
+      #- /home/pi/Downloads/homeflix:/downloads
+    #ports:
+      #- 8112:8112
+      #- 6881:6881
+      #- 6881:6881/udp
+    #restart: unless-stopped
+
+  torrent_transmission:
+    image: ghcr.io/linuxserver/transmission
+    container_name: torrent_transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+      #- TRANSMISSION_WEB_HOME=/combustion-release/ #optional
+      #- USER=username #optional
+      #- PASS=password #optional
+      #- WHITELIST=iplist #optional
+      #- HOST_WHITELIST=dnsnane list #optional
+    volumes:
+      - ./transmission/config:/config
+      - /home/pi/Downloads/homeflix:/downloads
+      - /home/pi/Downloads/homeflix:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
+
+  indexer_jackett:
+    image: ghcr.io/linuxserver/jackett
+    container_name: indexer_jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+      - AUTO_UPDATE=true #optional
+    volumes:
+      - ./jackett/config:/config
+      - /home/pi/Downloads/homeflix:/downloads
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+
+  movies_radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: movies_radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./radarr/config:/config
+      - /home/pi/Downloads/homeflix:/movies #optional
+      - /home/pi/Downloads/homeflix:/downloads #optional
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  series_sonarr:
+    image: ghcr.io/linuxserver/sonarr
+    container_name: series_sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./sonarr/config:/config
+      - /home/pi/Downloads/homeflix:/tv #optional
+      - /home/pi/Downloads/homeflix:/downloads #optional
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  #subtitles_bazarr:
+    #image: ghcr.io/linuxserver/bazarr
+    #container_name: subtitles_bazarr
+    #environment:
+      #- PUID=1000
+      #- PGID=1000
+      #- TZ=America/Sao_Paulo
+    #volumes:
+      #- ./bazarr/config:/config
+      #- /home/pi/Downloads/homeflix:/movies #optional
+      #- /home/pi/Downloads/homeflix:/tv #optional
+    #ports:
+      #- 6767:6767
+    #restart: unless-stopped
